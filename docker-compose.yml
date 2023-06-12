@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ${DB_MYSQL_USERNAME}
       SERVICE_NAME: mysql
     networks:
-      - d4
+      - dantop-networks
 
   nginx:
     image: nginx:alpine
