@@ -36,7 +36,7 @@ services:
 
   certbot:
     image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email panjaitanandree@gmail.com --agree-tos --no-eff-email -d
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email panjaitanandree@gmail.com --agree-tos --no-eff-email -d eticketingkbt.io
     volumes:
       - ./certbot/conf/:/etc/letsencrypt
       - ./certbot/logs/:/var/log/letsencrypt
