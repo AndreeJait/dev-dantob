@@ -1,0 +1,76 @@
+version: "3.7"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dantop-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_MYSQL_PASSWORD}
+      MYSQL_PASSWORD: ${DB_MYSQL_PASSWORD}
+      MYSQL_USER: ${DB_MYSQL_USERNAME}
+      SERVICE_NAME: mysql
+    networks:
+      - d4
+
+  nginx:
+    image: nginx:alpine
+    container_name: d4-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./www:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/sites-available/:/etc/nginx/sites-available/
+      - ./nginx/sites-available/:/etc/nginx/sites-enabled/
+      - ./dhparam:/etc/nginx/dhparam
+      - ./certbot/conf/:/etc/nginx/ssl/
+      - ./certbot/data:/usr/share/nginx/html/letsencrypt
+
+    networks:
+      - dantop-networks
+
+  certbot:
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email panjaitanandree@gmail.com --agree-tos --no-eff-email -d
+    volumes:
+      - ./certbot/conf/:/etc/letsencrypt
+      - ./certbot/logs/:/var/log/letsencrypt
+      - ./certbot/data:/usr/share/nginx/html/letsencrypt
+    networks:
+      - dantop-networks
+
+  socket:
+    image: socket
+    build: www/Socket-08
+    networks:
+      - dantop-networks
+    environment:
+      - PORT=${PORT_SOCKET}
+    ports:
+      - ${PORT_SOCKET}:${PORT_SOCKET}
+  app:
+    build:
+      args:
+        user: andre
+        uid: 1000
+      context: www/DantobBuss-Application/
+      dockerfile: Dockerfile
+    depends_on:
+      - socket
+    image: dantop
+    container_name: dantop-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - www/DantobBuss-Application/:/var/www
+    networks:
+      - dantop-networks
+
+networks:
+  dantop-networks:
+    driver: bridge
