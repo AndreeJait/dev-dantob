@@ -46,7 +46,7 @@ services:
 
   socket:
     image: socket
-    build: www/Socket-08
+    build: ./www/Socket-08
     networks:
       - dantop-networks
     environment:
@@ -58,7 +58,7 @@ services:
       args:
         user: andre
         uid: 1000
-      context: www/DantobBuss-Application/
+      context: ./www/DantobBuss-Application/
       dockerfile: Dockerfile
     depends_on:
       - socket
