@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
-      - www/DantobBuss-Application/:/var/www
+      - ./www/DantobBuss-Application/:/var/www
     networks:
       - dantop-networks
 
